@@ -19,14 +19,14 @@ SELAMAT DATANG DI TOKO BUKU ABC"""
     def menu_utama(self):
         print(self.main_title)
         print(self.main_action)
-        main_choice = int(input("Menu yang dipilih: "))
-        if main_choice == 1:
+        main_choice = input("Menu yang dipilih: ")
+        if main_choice == "1":
             os.system("cls")
             self.menu_pembelian()
-        elif main_choice == 2:
+        elif main_choice == "2":
             os.system("cls")
             self.menu_pembayaran()
-        elif main_choice == 3:
+        elif main_choice == "3":
             print("Terima Kasih Atas Kunjungan Anda Ke Toko Buku ABC.")
             input()
             os.system("cls")
@@ -51,22 +51,40 @@ SELAMAT DATANG DI TOKO BUKU ABC"""
         # Hanya muncul ketika isi keranjang tidak kosong
         if len(self.keranjang) != 0:
             print("Total Jumlah Barang di Keranjang: {} buku.".format(len(self.keranjang)))
-        add_buku = int(input("Pilih buku: "))
-        # Opsi untuk kembali ke menu utama
-        if add_buku == jumlah_buku_tersedia + 2:
+        try:
+            add_buku = int(input("Pilih buku: "))
+        except:
+            print("Pilihan buku tidak ada. Klik 'Enter' untuk memilih kembali.")
+            input()
             os.system("cls")
-            self.menu_utama()
-        # Opsi untuk pilihan lainnya
+            self.menu_pembelian()
         else:
-            self.keranjang.append(add_buku - 1)
-            tambah_lagi = input("Ingin Menambah Buku Lagi (Ya/Tidak)? ")
-            if tambah_lagi == "Ya":
-                self.notif_buku_added = True
-                os.system("cls")
-                self.menu_pembelian()
-            elif tambah_lagi == "Tidak":
+            # Opsi untuk kembali ke menu utama
+            if add_buku == jumlah_buku_tersedia + 2: #Misal daftar buku ada 3, kalo input 5 bakal masuk kesini
                 os.system("cls")
                 self.menu_utama()
+            # Opsi untuk pilihan lainnya
+            else:
+                if add_buku - 1 in self.data_buku.keys():
+                    self.keranjang.append(add_buku - 1)
+                    tambah_lagi = input("Ingin Menambah Buku Lagi (Ya/Tidak)? ")
+                    if tambah_lagi == "Ya":
+                        self.notif_buku_added = True
+                        os.system("cls")
+                        self.menu_pembelian()
+                    elif tambah_lagi == "Tidak":
+                        os.system("cls")
+                        self.menu_utama()
+                    else:
+                        print("Pilihan tidak ada. Tekan 'Enter' untuk kembali ke Menu Pembelian. ")
+                        input()
+                        os.system("cls")
+                        self.menu_pembelian()
+                else:
+                    print("Pilihan tidak ada. Tekan 'Enter' untuk kembali ke Menu Pembelian. ")
+                    input()
+                    os.system("cls")
+                    self.menu_pembelian()
     def menu_pembayaran(self):
         print(self.main_title)
         if len(self.keranjang) == 0:
@@ -83,16 +101,23 @@ SELAMAT DATANG DI TOKO BUKU ABC"""
                 total_harga += self.data_buku[isi][3]
             print("Total Harga\t\t: Rp.{}".format(str(total_harga)))
             # Cek apakah uang yang dibayar itu cukup
-            total_uang = int(input("Masukkan jumlah uang pembayaran: Rp."))
-            if  total_uang > total_harga:
-                print("Uang kembalian: Rp.{}".format(total_uang - total_harga))
+            try:
+                total_uang = int(input("Masukkan jumlah uang pembayaran: Rp."))
+            except:
+                print("Tolong masukkan nilai angka, bukan huruf.")
                 input()
-                self.exit()
-            else:
-                print("Uang yang anda berikan tidak mencukupi")
-                input()
-                os.system('cls')
+                os.system("cls")
                 self.menu_pembayaran()
+            else:
+                if  total_uang > total_harga:
+                    print("Uang kembalian: Rp.{}".format(total_uang - total_harga))
+                    input()
+                    self.exit()
+                else:
+                    print("Uang yang anda berikan tidak mencukupi")
+                    input()
+                    os.system('cls')
+                    self.menu_pembayaran()
     def run(self):
         self.menu_utama()
     def exit(self):
